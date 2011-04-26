@@ -1,5 +1,8 @@
 (function( $ ){
-	$.dragAnimatable = {};
+	$.dragAnimatable = {
+		pattern: new RegExp(/\${\d+}/)
+	};
+	var _o = $.dragAnimatable;
 
   $.fn.dragAnimatable = function( method ){
 	var settings = {
@@ -12,6 +15,9 @@
 	var methods = {
 		init: function( options ){
 			var _steps;
+			_o.$this = this;
+			_o.thisLeftOffset = _o.$this.offset().left
+			
 			
 			if ( options ) $.extend( settings, options );
 			
@@ -26,36 +32,45 @@
 			
 			_steps = settings.end - settings.start + 1;
 			$.dragAnimatable._step = parseInt(this.width() / _steps, 10);
+			$.dragAnimatable._current = settings.initial;
 			
 			methods.preload();
 		},
 		
 		preload: function(){
 			var i,
-				images = [],
-				pattern = new RegExp(/\${\d+}/);			
+				images = [];			
 			
 			for (i = settings.start; i <= settings.end; i++) {
-				images[i] = settings.pattern.replace(pattern, i);
-				//console.log(images[i]);
+				images[i] = settings.pattern.replace(_o.pattern, i);
+				new Image().src = images[i];
 			}
 		},
 		
 		start: function( event, ui ) {
-			$.dragAnimatable._startX = event.clientX - $(event.target).offset().left;
+			$.dragAnimatable._startX = event.clientX - _o.thisLeftOffset;
 		},
 		
 		drag: function( event, ui ) {
-			var _x = event.clientX - $(event.target).offset().left,
-				_startX = $.dragAnimatable._startX,
-				_step = $.dragAnimatable._step,
-				_move = parseInt((_x - _startX) / _step, 10);
-				console.info('Move', _move, 'steps from here');
+			var _x = event.clientX - _o.thisLeftOffset,
+				move = parseInt((_x - _o._startX) / _o._step, 10),
+				// constrain movement
+				target = _o._current + move;
+
+				move = (target > settings.end || target < settings.start) ? 0 : move;
+				target = _o._current + move;
+				
 			// for each step, change picture
+			if (_o._current !== target)	methods.keyFrame(target);
+		},
+		
+		keyFrame: function(frame) {
+			var	src = settings.pattern.replace(_o.pattern, frame);
+			_o.$this.attr('src', src);
+			_o._current = frame;
 		},
 		
 		stop: function( event, ui ) {
-			console.log(arguments);
 			// calculate closest snap
 			// snap to it
 		}
