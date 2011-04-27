@@ -16,6 +16,7 @@
 			41: [31, 46],
 			93: [47, 93]
 		},
+		snapDuration: 1000,
 		pattern: 'assets/smartcover${0}.jpg'
 	};
 
@@ -82,19 +83,39 @@
 		},
 		
 		stop: function( event, ui ) {			
-			var snapTo = 0;
-			// calculate closest snap
+			var snapTo = 0,
+				steps;
+			
+			// helper method: returns snapTo number based on which range surrounds n
 			function snap(n, ranges) {
 				var ret = 0;
 				$.each(ranges, function(i, range){
 					if ( n >= range[0] && n <= range[1] ) ret = i;
 				});
+				
 				return ret;
 			}			
-			snapTo = snap(_o._current, settings.snapTo);
-
-			// snap to it
 			
+			function animate( steps, target, duration ){
+				var tickDuration = parseInt( steps / duration, 10 ),
+					direction = _o._current > target ? -1 : 1,
+					animation = function(){
+						if ( steps ) {
+							methods.update( _o._current + direction );
+							steps--;
+							setTimeout( animation, tickDuration );
+						}
+					};
+					
+					setTimeout( animation, tickDuration );
+			}
+			
+			// calculate closest snap and count steps
+			snapTo = +snap(_o._current, settings.snapTo);
+			steps = Math.abs(snapTo - _o._current);
+			
+			// go!
+			animate(steps, snapTo, settings.snapDuration);
 		}
 	};
 	
