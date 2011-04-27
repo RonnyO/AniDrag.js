@@ -16,16 +16,20 @@
 			41: [31, 46],
 			93: [47, 93]
 		},
-		pattern: 'assets/smartcover${0}.jpg'
+		pattern: 'assets/smartcover${0}.jpg',
+		calculateStep: null
 	};
 
 	var methods = {
 		init: function( options ){
 			if ( options ) $.extend( settings, options );
+			methods.calculateStep = settings.calculateStep || methods.calculateStep;
+			
 			
 			// cache
 			_o.$this = this;
 			_o.thisLeftOffset = _o.$this.offset().left;
+			_o.thisTopOffset = _o.$this.offset().top;
 			_o._current = settings.initial;
 			
 			// calculate pixels per step
@@ -34,7 +38,6 @@
 			
 			// Make this draggable
 			this.draggable({
-				axis: 'x',
 				containment: this,
 				start: methods.start,
 				drag: methods.drag,
@@ -57,13 +60,23 @@
 		},
 		
 		start: function( event, ui ) {
-			_o._startX = event.clientX - _o.thisLeftOffset;
+			_o._start = {
+				x: event.clientX - _o.thisLeftOffset,
+				y: event.clientY - _o.thisTopOffset
+			};
+			
+			// flip direction
+			_o._flip = _o._current == 0;
+		},
+		
+		calculateStep: function(event){
+			return	event.clientY - _o._start.y + event.clientX - $.dragAnimatable._start.x;
 		},
 		
 		drag: function( event, ui ) {
 			// calculate steps to take
-			var _x = event.clientX - _o.thisLeftOffset,
-				move = parseInt((_x - _o._startX) / _o._step, 10),
+			var pixels = _o._flip ? - methods.calculateStep(event) : methods.calculateStep(event),
+				move = parseInt( pixels / _o._step, 10),
 				// constrain movement
 				target = _o._current + move;
 
