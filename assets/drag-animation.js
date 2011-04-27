@@ -10,7 +10,12 @@
 		start: 0,
 		end: 93,
 		initial: 93,
-		snapTo: [41],
+		snapTo: {
+			0: [0, 17],
+			25: [18, 30],
+			41: [31, 46],
+			93: [47, 93]
+		},
 		pattern: 'assets/smartcover${0}.jpg'
 	};
 
@@ -26,10 +31,6 @@
 			// calculate pixels per step
 			_o._steps = settings.end - settings.start + 1;
 			_o._step = parseInt(this.width() / _o._steps, 10);
-			
-			// add edges to snapTo points
-			settings.snapTo.unshift(settings.start);
-			settings.snapTo.push(settings.end);
 			
 			// Make this draggable
 			this.draggable({
@@ -81,26 +82,23 @@
 		},
 		
 		stop: function( event, ui ) {			
+			var snapTo = 0;
 			// calculate closest snap
-			var snapTo = settings.snapTo.closest(_o._current),
-				steps = Math.abs(_o._current - snapTo);
+			function snap(n, ranges) {
+				var ret = 0;
+				$.each(ranges, function(i, range){
+					if ( n >= range[0] && n <= range[1] ) ret = i;
+				});
+				return ret;
+			}			
+			snapTo = snap(_o._current, settings.snapTo);
 
 			// snap to it
+			
 		}
 	};
 	
 	methods.init.apply(this, arguments);
   };
-  
-	// Helper method - Find the closest number in an array
-	// Thanks, http://stackoverflow.com/questions/4811536/find-the-number-in-an-array-that-is-closest-to-a-given-number/4811666#4811666
-	Array.prototype.closest = function( n ){
-		var i = 0, _a = [];
-		for ( i; i < this.length; i++ ) {
-			_a[i] = Math.abs( n - this[i] );
-		}
-		min = Math.min.apply( this, _a );
-		f = _a.indexOf( min );
-		return this[f];
-	};
+	
 })( jQuery );
