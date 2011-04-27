@@ -82,10 +82,24 @@
 			_o._current = frame;
 		},
 		
+		animate: function( steps, target, duration ){
+			var tickDuration = parseInt( steps / duration, 10 ),
+				direction = _o._current > target ? -1 : 1,
+				animation = function(){
+					if ( steps ) {
+						methods.update( _o._current + direction );
+						steps--;
+						setTimeout( animation, tickDuration );
+					}
+				};
+
+			setTimeout( animation, tickDuration );
+		},
+		
 		stop: function( event, ui ) {			
 			var snapTo = 0,
 				steps;
-			
+				
 			// helper method: returns snapTo number based on which range surrounds n
 			function snap(n, ranges) {
 				var ret = 0;
@@ -94,20 +108,6 @@
 				});
 				
 				return ret;
-			}			
-			
-			function animate( steps, target, duration ){
-				var tickDuration = parseInt( steps / duration, 10 ),
-					direction = _o._current > target ? -1 : 1,
-					animation = function(){
-						if ( steps ) {
-							methods.update( _o._current + direction );
-							steps--;
-							setTimeout( animation, tickDuration );
-						}
-					};
-					
-					setTimeout( animation, tickDuration );
 			}
 			
 			// calculate closest snap and count steps
@@ -115,7 +115,7 @@
 			steps = Math.abs(snapTo - _o._current);
 			
 			// go!
-			animate(steps, snapTo, settings.snapDuration);
+			methods.animate(steps, snapTo, settings.snapDuration);
 		}
 	};
 	
