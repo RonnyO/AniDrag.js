@@ -62,6 +62,7 @@
 		
 		drag: function( event, ui ) {
 			// calculate steps to take
+			console.log(_o._startX);
 			var _x = event.clientX - _o.thisLeftOffset,
 				move = parseInt((_x - _o._startX) / _o._step, 10),
 				// constrain movement
@@ -82,16 +83,15 @@
 		},
 		
 		animate: function( steps, target ){
-			var tickDuration = 10,
-				direction = _o._current > target ? -1 : 1,
+			var direction = _o._current > target ? -1 : 1,
 				animation = function(){
 					if ( steps ) {
 						methods.update( _o._current + direction );
 						steps--;
-						setTimeout( animation, tickDuration );
+						setTimeout( animation );
 					}
 				};
-			setTimeout( animation, tickDuration );
+			setTimeout( animation );
 		},
 		
 		stop: function( event, ui ) {			
