@@ -16,7 +16,6 @@
 			41: [31, 46],
 			93: [47, 93]
 		},
-		snapDuration: 1000,
 		pattern: 'assets/smartcover${0}.jpg'
 	};
 
@@ -58,7 +57,7 @@
 		},
 		
 		start: function( event, ui ) {
-			$.dragAnimatable._startX = event.clientX - _o.thisLeftOffset;
+			_o._startX = event.clientX - _o.thisLeftOffset;
 		},
 		
 		drag: function( event, ui ) {
@@ -82,8 +81,8 @@
 			_o._current = frame;
 		},
 		
-		animate: function( steps, target, duration ){
-			var tickDuration = parseInt( steps / duration, 10 ),
+		animate: function( steps, target ){
+			var tickDuration = 10,
 				direction = _o._current > target ? -1 : 1,
 				animation = function(){
 					if ( steps ) {
@@ -92,7 +91,6 @@
 						setTimeout( animation, tickDuration );
 					}
 				};
-
 			setTimeout( animation, tickDuration );
 		},
 		
