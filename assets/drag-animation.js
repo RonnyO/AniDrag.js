@@ -25,7 +25,6 @@
 			if ( options ) $.extend( settings, options );
 			methods.calculateStep = settings.calculateStep || methods.calculateStep;
 			
-			
 			// cache
 			_o.$this = this;
 			_o.thisLeftOffset = _o.$this.offset().left;
@@ -69,20 +68,31 @@
 			_o._flip = _o._current == 0;
 		},
 		
-		calculateStep: function(event){
-			return	event.clientY - _o._start.y + event.clientX - $.dragAnimatable._start.x;
+		modifier: function(){
+			var ret = _o.pixels,
+				direction = 'left',
+				flip = false;
+			
+			console.log(_o.pixels > _o.beforePixels);
+			
+			if (_o._flip || flip) ret *= -1;
+			return ret;
 		},
 		
 		drag: function( event, ui ) {
+			var move, target;
 			// calculate steps to take
-			var pixels = _o._flip ? - methods.calculateStep(event) : methods.calculateStep(event),
-				move = parseInt( pixels / _o._step, 10),
-				// constrain movement
-				target = _o._current + move;
-
-				move = (target > settings.end || target < settings.start) ? 0 : move;
-				// target frame after movement
-				target = _o._current + move;
+			_o.beforePixels = _o.pixels;
+			_o.pixels = (event.clientY - _o._start.y + event.clientX - $.dragAnimatable._start.x);
+			_o.pixels = methods.modifier();
+			
+			move = parseInt( _o.pixels / _o._step, 10);
+			// constrain movement
+			target = _o._current + move;
+			if (target > settings.end || target < settings.start) move = 0;
+			
+			// target frame after movement
+			target = _o._current + move;
 				
 			// for each actual step, update frame
 			if (_o._current !== target)	methods.update(target);
