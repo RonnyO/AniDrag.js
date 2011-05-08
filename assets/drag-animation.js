@@ -64,18 +64,17 @@
 				y: event.clientY - _o.thisTopOffset
 			};
 			
-			// flip direction
+			// iPad specific - Starting from the first frame should flip directions
 			_o._flip = _o._current == 0;
 		},
 		
 		modifier: function(){
-			var ret = _o.pixels,
-				direction = 'left',
-				flip = false;
+			var ret = _o.pixels;
 			
-			console.log(_o.pixels > _o.beforePixels);
+			console.log(_o.pixels, _o.beforePixels);
 			
-			if (_o._flip || flip) ret *= -1;
+			// flip direction
+			if (_o._flip) ret *= -1;
 			return ret;
 		},
 		
