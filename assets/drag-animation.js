@@ -65,16 +65,24 @@
 			};
 			
 			// iPad specific - Starting from the first frame should flip directions
-			_o._flip = _o._current == 0;
+			_o.flip = _o._current == 0;
+			_o.direction = true; // right
 		},
 		
 		modifier: function(){
 			var ret = _o.pixels;
 			
-			console.log(_o.pixels, _o.beforePixels);
+			if (_o.beforePixels != null) {
+				var newDirection = _o.beforePixels > _o.pixels ? true : false;
+				if (newDirection != _o.direction) {
+					console.log('changed');
+					_o.flip = true;
+				}
+				_o.direction = newDirection;
+			}
 			
 			// flip direction
-			if (_o._flip) ret *= -1;
+			if (_o.flip) ret *= -1;
 			return ret;
 		},
 		
