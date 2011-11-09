@@ -1,7 +1,5 @@
 (function( $ ){
-	$.dragAnimatable = {
-		pattern: /\${\d+}/
-	};
+	$.dragAnimatable = {};
 	var _o = $.dragAnimatable;
 
   $.fn.dragAnimatable = function( options ){
@@ -17,7 +15,7 @@
 			41: [31, 46],
 			93: [47, 93]
 		},
-		pattern: 'assets/smartcover${0}.jpg',
+		pattern: 'assets/smartcover0.jpg',
 		calculateStep: null
 	};
 
@@ -52,7 +50,7 @@
 				frames = [];			
 			
 			for (i = settings.start; i <= settings.end; i++) {
-				frames[i] = settings.pattern.replace(/\${\d+}/, i);
+				frames[i] = settings.pattern.replace('0', i);
 				new Image().src = frames[i];
 			}
 		},
