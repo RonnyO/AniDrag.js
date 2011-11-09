@@ -1,5 +1,7 @@
 (function( $ ){
-	$.dragAnimatable = {};
+	$.dragAnimatable = {
+		pattern: new RegExp(/\d+/)
+	};
 	var _o = $.dragAnimatable;
 
   $.fn.dragAnimatable = function( options ){
@@ -50,7 +52,7 @@
 				frames = [];			
 			
 			for (i = settings.start; i <= settings.end; i++) {
-				frames[i] = settings.pattern.replace('0', i);
+				frames[i] = settings.pattern.replace(_o.pattern, i);
 				new Image().src = frames[i];
 			}
 		},
