@@ -1,6 +1,6 @@
 (function( $ ){
 	$.dragAnimatable = {
-		pattern: new RegExp(/\${\d+}/)
+		pattern: /\${\d+}/
 	};
 	var _o = $.dragAnimatable;
 
@@ -10,6 +10,7 @@
 		start: 0,
 		end: 93,
 		initial: 93,
+		tickDuration: 11,
 		snapTo: {
 			0: [0, 17],
 			25: [18, 30],
@@ -51,11 +52,9 @@
 				frames = [];			
 			
 			for (i = settings.start; i <= settings.end; i++) {
-				frames[i] = settings.pattern.replace(_o.pattern, i);
+				frames[i] = settings.pattern.replace(/\${\d+}/, i);
 				new Image().src = frames[i];
 			}
-			
-			// adding a callout when preloader is done could be a nice touch
 		},
 		
 		start: function( event, ui ) {
@@ -82,7 +81,7 @@
 			var move, target;
 			// calculate steps to take
 			_o.beforePixels = _o.pixels;
-			_o.pixels = (event.clientY - _o._start.y + event.clientX - $.dragAnimatable._start.x);
+			_o.pixels = (event.clientY - _o._start.y + event.clientX - _o._start.x);
 			_o.pixels = methods.modifier();
 			
 			move = parseInt( _o.pixels / _o._step, 10);
@@ -104,7 +103,7 @@
 		},
 		
 		animate: function( steps, target ){
-			var tickDuration = 11,
+			var tickDuration = settings.tickDuration,
 				direction = _o._current > target ? -1 : 1,
 				animation = function(){
 					if ( steps ) {
